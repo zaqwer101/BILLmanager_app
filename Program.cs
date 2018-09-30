@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Windows.Forms;
 
@@ -13,6 +14,8 @@ namespace BILLmanager_app
         
         public static void Main(string[] args)
         {
+            Console.WriteLine(BillmgrHandler.request("ticket", new List<string>() {"out=JSONdata"} ));
+            
             Form mainForm = new Form();
             Panel box = new Panel();
             box.Dock = DockStyle.Fill;
@@ -29,5 +32,7 @@ namespace BILLmanager_app
         {
             Console.WriteLine("Kek!");
         }
+        
+        
     }
 }
