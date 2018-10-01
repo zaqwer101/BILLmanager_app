@@ -8,11 +8,6 @@ namespace BILLmanager_app
 {
     internal class Program
     {
-        void button_handler()
-        {
-            
-        }
-        
         public static void Main(string[] args)
         {
             AllTickets allTickets = BillmgrHandler.getTickets();
@@ -38,11 +33,6 @@ namespace BILLmanager_app
             
             mainForm.Controls.Add(ticketsView);
             mainForm.ShowDialog();
-        }
-
-        private static void ButtonHandler(object sender, EventArgs e)
-        {
-            Console.WriteLine("Kek!");
         }
     }
 }
