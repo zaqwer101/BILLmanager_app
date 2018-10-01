@@ -6,12 +6,14 @@ using System.Windows.Forms;
 
 namespace BILLmanager_app
 {
-    internal class Program
+    public class Program
     {
+        public static AllTickets allTickets; 
+        
         public static void Main(string[] args)
         {
-            AllTickets allTickets = BillmgrHandler.getTickets();
-            
+            allTickets = BillmgrHandler.getTickets();
+
             Form mainForm = new Form();
             mainForm.Text = "Кекитница";
             mainForm.Size = new Size(1000, 600);
