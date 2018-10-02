@@ -4,10 +4,11 @@ namespace BILLmanager_app
 {
     public class AllTickets
     {
-        public Ticket[] Tickets { get; set; }
+        public _Ticket[] Tickets { get; set; }
+
     }
 
-    public class Ticket
+    public class _Ticket
     {
         public string id { get; set; }
         public string name { get; set; }

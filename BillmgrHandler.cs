@@ -12,11 +12,31 @@ namespace BILLmanager_app
         private static string authinfo;
         public static string billAddr;
 
-        public static AllTickets getTickets()
+        public static List<Dictionary<string, string>> getTickets()
         {
             string jsonOut = request("ticket", new List<string>() {"out=JSONdata"});
             jsonOut = "{ \"Tickets\": " + jsonOut + "}"; 
-            return JsonConvert.DeserializeObject<AllTickets>(jsonOut); 
+            AllTickets allTickets =  JsonConvert.DeserializeObject<AllTickets>(jsonOut); 
+            
+            List<Dictionary<string, string>> list = new List<Dictionary<string, string>>();
+            
+            foreach (_Ticket ticket in allTickets.Tickets)
+            {
+                Dictionary<string, string> ticketInfo = new Dictionary<string, string>();
+                
+                ticketInfo["id"] = ticket.id;
+                ticketInfo["name"] = ticket.name;
+                ticketInfo["client"] = ticket.client;
+                ticketInfo["queue"] = ticket.queue;
+                ticketInfo["not_blocked"] = ticket.not_blocked;
+                ticketInfo["deadline"] = ticket.deadline;
+                
+                list.Add(ticketInfo);
+            }
+
+            return list;
+            
+            
         }
         
         public static string request(string func, List<string> listArgs)
