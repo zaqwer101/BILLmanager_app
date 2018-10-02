@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.Remoting.Channels;
 using System.Windows.Forms;
 
 namespace BILLmanager_app
@@ -31,6 +32,32 @@ namespace BILLmanager_app
             ticketsView.Items.Remove(item);
         }
         
+        private void TicketsViewOnColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
+        {
+            ListView view = (ListView) sender; 
+            if (e.ColumnIndex != view.Columns.Count - 1)
+            {
+                if (e.NewWidth <= view.Columns[e.ColumnIndex].Width && view.Columns[e.ColumnIndex].Width > 20)
+                {
+                    view.Columns[e.ColumnIndex + 1].Width -= e.NewWidth - view.Columns[e.ColumnIndex].Width;
+                }
+                else
+                {
+                    if (e.NewWidth >= view.Columns[e.ColumnIndex].Width && view.Columns[e.ColumnIndex + 1].Width > 20)
+                    {
+                        view.Columns[e.ColumnIndex + 1].Width -= e.NewWidth - view.Columns[e.ColumnIndex].Width;
+                    }
+                    else
+                    {
+                        e.NewWidth = view.Columns[e.ColumnIndex].Width;
+                        e.Cancel = true;
+                        Console.WriteLine("Else case ");
+                    }
+                    
+                }
+            }
+        }
+        
         public TicketsView()
         {
             Settings = new Settings();
@@ -41,11 +68,14 @@ namespace BILLmanager_app
             mainForm.Text = "Кекитница";
             mainForm.Size = new Size(1000, 600);
             ticketsView = new ListView();
+            
+            ticketsView.ColumnWidthChanging += TicketsViewOnColumnWidthChanging; 
+            
             ticketsView.Dock = DockStyle.Fill;
             ticketsView.View = View.Details;
             ticketsView.FullRowSelect = true;
 
-            // Загрузка колонок в список
+            // Загрузка колонок в ListView
             int sizePerField = Convert.ToInt32(mainForm.Size.Width / Settings.ColumnToName.Keys.Count);
             foreach (string field in Settings.ColumnToName.Values)
             {
