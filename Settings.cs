@@ -3,30 +3,32 @@ using System.Collections.Generic;
 namespace BILLmanager_app
 {
     public class Settings
-    {
-        // Переменные для локализации
-        public string id_col = "ID",
-            name_col = "Name",
-            client_col = "Client",
-            queue_col = "Queue",
-            deadline_col = "Deadline";
-        
-        public Dictionary<string, string> ColumnToText;
+    { 
+        public Dictionary<string, string> ColumnToName;
+        public Dictionary<string, int> ColumnToSize;
 
         public Settings()
         {
-            ColumnToText = new Dictionary<string, string>();
-            ReloadColNames();
+            ColumnToName = new Dictionary<string, string>();
+            LoadColNames();
         }
 
         // Заполнение списка соответствий имён колонок с их внутренними именами
-        public void ReloadColNames()
+        public void LoadColNames()
         {
-            ColumnToText[id_col] = "id";
-            ColumnToText[name_col] = "name";
-            ColumnToText[client_col] = "client";
-            ColumnToText[queue_col] = "queue";
-            ColumnToText[deadline_col] = "deadline";
+            ColumnToName = new Dictionary<string, string>()
+            {
+                {"id", "ID"},
+                {"name", "Name"},
+                {"client", "Client"},
+                {"queue", "Queue"},
+                {"deadline", "Deadline"}
+            };
+        }
+
+        public void LoadColSizes()
+        {
+            
         }
     }
 }

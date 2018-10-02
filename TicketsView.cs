@@ -34,7 +34,7 @@ namespace BILLmanager_app
         public TicketsView()
         {
             Settings = new Settings();
-            Settings.ReloadColNames();
+            Settings.LoadColNames();
             
             allTickets = BillmgrHandler.getTickets();
             mainForm = new Form();
@@ -46,8 +46,8 @@ namespace BILLmanager_app
             ticketsView.FullRowSelect = true;
 
             // Загрузка колонок в список
-            int sizePerField = Convert.ToInt32(mainForm.Size.Width / Settings.ColumnToText.Keys.Count);
-            foreach (string field in Settings.ColumnToText.Keys)
+            int sizePerField = Convert.ToInt32(mainForm.Size.Width / Settings.ColumnToName.Keys.Count);
+            foreach (string field in Settings.ColumnToName.Values)
             {
                 AddColumnToView(field, sizePerField);
             }
