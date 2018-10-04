@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Channels;
@@ -43,6 +44,19 @@ namespace BILLmanager_app
         
         private void TicketsViewOnColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
         {
+            void _innerUpdateColSize()
+            {
+                Settings.ColumnToSize[
+                    Settings.ColumnToName.FirstOrDefault(x => x.Value == ticketsView.Columns[e.ColumnIndex].Text).Key
+                ] = Convert.ToInt32(
+                    (double)e.NewWidth / mainForm.Size.Width * 100); 
+            
+                Settings.ColumnToSize[
+                    Settings.ColumnToName.FirstOrDefault(x => x.Value == ticketsView.Columns[e.ColumnIndex + 1].Text).Key
+                ] = Convert.ToInt32(
+                    (double)ticketsView.Columns[e.ColumnIndex + 1].Width / mainForm.Size.Width * 100);
+            }
+            
             ListView view = (ListView) sender; 
             if (e.ColumnIndex != view.Columns.Count - 1)
             {
@@ -50,12 +64,15 @@ namespace BILLmanager_app
                 if (e.NewWidth <= view.Columns[e.ColumnIndex].Width && view.Columns[e.ColumnIndex].Width > 20)
                 {
                     view.Columns[e.ColumnIndex + 1].Width -= e.NewWidth - view.Columns[e.ColumnIndex].Width;
+
+                    _innerUpdateColSize();
                 }
                 else
                 {
                     if (e.NewWidth >= view.Columns[e.ColumnIndex].Width && view.Columns[e.ColumnIndex + 1].Width > 20)
                     {
                         view.Columns[e.ColumnIndex + 1].Width -= e.NewWidth - view.Columns[e.ColumnIndex].Width;
+                        _innerUpdateColSize();
                     }
                     else
                     {
@@ -63,12 +80,7 @@ namespace BILLmanager_app
                         e.Cancel = true;
                     }
                 }
-            }
-// TODO: Сохранять изменения размеров колонок
-//            Settings.ColumnToSize[
-//                Settings.ColumnToName.FirstOrDefault(x => x.Value == ticketsView.Columns[e.ColumnIndex].Text).Key
-//            ] = mainForm.Width / e.NewWidth;
-
+            }            
         }
         
         
