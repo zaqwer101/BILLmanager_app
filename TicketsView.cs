@@ -64,7 +64,7 @@ namespace BILLmanager_app
                     }
                 }
             }
-// TODO:
+// TODO: Сохранять изменения размеров колонок
 //            Settings.ColumnToSize[
 //                Settings.ColumnToName.FirstOrDefault(x => x.Value == ticketsView.Columns[e.ColumnIndex].Text).Key
 //            ] = mainForm.Width / e.NewWidth;
