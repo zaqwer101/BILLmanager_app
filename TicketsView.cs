@@ -51,7 +51,6 @@ namespace BILLmanager_app
                     {
                         e.NewWidth = view.Columns[e.ColumnIndex].Width;
                         e.Cancel = true;
-                        Console.WriteLine("Else case ");
                     }
                     
                 }
@@ -69,17 +68,19 @@ namespace BILLmanager_app
             mainForm.Size = new Size(1000, 600);
             ticketsView = new ListView();
             
-            ticketsView.ColumnWidthChanging += TicketsViewOnColumnWidthChanging; 
+            ticketsView.ColumnWidthChanging += TicketsViewOnColumnWidthChanging;
             
             ticketsView.Dock = DockStyle.Fill;
             ticketsView.View = View.Details;
             ticketsView.FullRowSelect = true;
 
+            // Загрузка размера колонок из настроек
+            Settings.LoadColSizes(mainForm.Size.Width); 
+            
             // Загрузка колонок в ListView
-            int sizePerField = Convert.ToInt32(mainForm.Size.Width / Settings.ColumnToName.Keys.Count);
-            foreach (string field in Settings.ColumnToName.Values)
+            foreach (string col in Settings.ColumnToName.Keys)
             {
-                AddColumnToView(field, sizePerField);
+                AddColumnToView(Settings.ColumnToName[col], Settings.ColumnToSize[col]);
             }
             
             // Загрузка тикетов в список

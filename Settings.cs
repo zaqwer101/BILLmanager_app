@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace BILLmanager_app
@@ -6,11 +7,14 @@ namespace BILLmanager_app
     { 
         public Dictionary<string, string> ColumnToName;
         public Dictionary<string, int> ColumnToSize;
+        public bool isColSizeDefault; 
 
         public Settings()
         {
             ColumnToName = new Dictionary<string, string>();
             LoadColNames();
+            ColumnToSize = new Dictionary<string, int>();
+            isColSizeDefault = true;
         }
 
         // Заполнение списка соответствий имён колонок с их внутренними именами
@@ -26,9 +30,15 @@ namespace BILLmanager_app
             };
         }
 
-        public void LoadColSizes()
+        public void LoadColSizes(int formWidth)
         {
-            
+            if (isColSizeDefault)
+            {
+                foreach (string col in ColumnToName.Keys)
+                {
+                    ColumnToSize[col] = Convert.ToInt32(formWidth / ColumnToName.Keys.Count); 
+                }
+            }
         }
     }
 }
