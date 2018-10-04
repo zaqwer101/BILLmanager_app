@@ -31,12 +31,22 @@ namespace BILLmanager_app
         {
             ticketsView.Items.Remove(item);
         }
+        public void UpdateColumnsSize() 
+        {
+            foreach (ColumnHeader column in ticketsView.Columns)
+            {
+                column.Width = mainForm.Size.Width * Settings.ColumnToSize[
+                    Settings.ColumnToName.FirstOrDefault(x => x.Value == column.Text).Key // Поиск в словаре по тексту колонки
+                ] / 100;
+            }
+        }
         
         private void TicketsViewOnColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
         {
             ListView view = (ListView) sender; 
             if (e.ColumnIndex != view.Columns.Count - 1)
             {
+                Settings.isColSizeDefault = false;
                 if (e.NewWidth <= view.Columns[e.ColumnIndex].Width && view.Columns[e.ColumnIndex].Width > 20)
                 {
                     view.Columns[e.ColumnIndex + 1].Width -= e.NewWidth - view.Columns[e.ColumnIndex].Width;
@@ -52,10 +62,15 @@ namespace BILLmanager_app
                         e.NewWidth = view.Columns[e.ColumnIndex].Width;
                         e.Cancel = true;
                     }
-                    
                 }
             }
+// TODO:
+//            Settings.ColumnToSize[
+//                Settings.ColumnToName.FirstOrDefault(x => x.Value == ticketsView.Columns[e.ColumnIndex].Text).Key
+//            ] = mainForm.Width / e.NewWidth;
+
         }
+        
         
         public TicketsView()
         {
@@ -63,9 +78,6 @@ namespace BILLmanager_app
             Settings.LoadColNames();
             
             allTickets = BillmgrHandler.getTickets();
-            mainForm = new Form();
-            mainForm.Text = "Кекитница";
-            mainForm.Size = new Size(1000, 600);
             ticketsView = new ListView();
             
             ticketsView.ColumnWidthChanging += TicketsViewOnColumnWidthChanging;
@@ -74,13 +86,19 @@ namespace BILLmanager_app
             ticketsView.View = View.Details;
             ticketsView.FullRowSelect = true;
 
+            
+            mainForm = new Form();
+            mainForm.Resize += MainFormOnResize;
+            mainForm.Text = "Кекитница";
+            mainForm.Size = new Size(1000, 600);
+            mainForm.Controls.Add(ticketsView);
             // Загрузка размера колонок из настроек
             Settings.LoadColSizes(mainForm.Size.Width); 
             
             // Загрузка колонок в ListView
             foreach (string col in Settings.ColumnToName.Keys)
             {
-                AddColumnToView(Settings.ColumnToName[col], Settings.ColumnToSize[col]);
+                AddColumnToView(Settings.ColumnToName[col], Convert.ToInt32(mainForm.Size.Width * Settings.ColumnToSize[col] / 100));
             }
             
             // Загрузка тикетов в список
@@ -89,7 +107,13 @@ namespace BILLmanager_app
                 AddItemToList(new []{ ticket["id"], ticket["name"], ticket["client"], ticket["queue"], ticket["deadline"] } );
             }
 
-            mainForm.Controls.Add(ticketsView);
+            
+        }
+
+        private void MainFormOnResize(object sender, EventArgs e)
+        {
+            Settings.LoadColSizes(mainForm.Size.Width);
+            UpdateColumnsSize();
         }
 
         public void Show()

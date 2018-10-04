@@ -6,7 +6,7 @@ namespace BILLmanager_app
     public class Settings
     { 
         public Dictionary<string, string> ColumnToName;
-        public Dictionary<string, int> ColumnToSize;
+        public Dictionary<string, int> ColumnToSize; // Словарь коэффицентов размеров
         public bool isColSizeDefault; 
 
         public Settings()
@@ -30,13 +30,16 @@ namespace BILLmanager_app
             };
         }
 
+        // Загрузка коэффицентов размеров колонок, относительных ширине формы
         public void LoadColSizes(int formWidth)
         {
             if (isColSizeDefault)
             {
                 foreach (string col in ColumnToName.Keys)
                 {
-                    ColumnToSize[col] = Convert.ToInt32(formWidth / ColumnToName.Keys.Count); 
+                    ColumnToSize[col] = Convert.ToInt32(
+                        100 / ColumnToName.Keys.Count
+                        ); 
                 }
             }
         }
