@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 namespace BILLmanager_app
 {
-    public class Settings
+    [Serializable]
+    public class Settings 
     { 
         public Dictionary<string, string> ColumnToName;
         public Dictionary<string, int> ColumnToSize; // Словарь коэффицентов размеров

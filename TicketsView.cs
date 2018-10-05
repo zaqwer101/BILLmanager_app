@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Channels;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 
 namespace BILLmanager_app
@@ -84,7 +86,22 @@ namespace BILLmanager_app
         
         public TicketsView()
         {
-            Settings = new Settings();
+            try
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                using (FileStream fs = new FileStream("settings.dat", FileMode.OpenOrCreate))
+                {
+                    Settings = (Settings) formatter.Deserialize(fs);
+                    Console.WriteLine("Загрузил настройки");
+                }
+            }
+            catch (Exception e)
+            {
+                Settings = new Settings();
+                Console.WriteLine("Не смог загрузить настройки");
+            }
+            
+            
             Settings.LoadColNames();
             
             allTickets = BillmgrHandler.getTickets();
@@ -95,13 +112,13 @@ namespace BILLmanager_app
             ticketsView.Dock = DockStyle.Fill;
             ticketsView.View = View.Details;
             ticketsView.FullRowSelect = true;
-
+            ticketsView.Scrollable = false; 
+            
             mainForm = new Form();
             mainForm.Resize += MainFormOnResize;
             mainForm.Text = "Кекитница";
             mainForm.Size = new Size(1000, 600);
-
-            ticketsView.Scrollable = false; 
+            mainForm.FormClosed += MainFormOnFormClosed;
             
             mainForm.Controls.Add(ticketsView);
             // Загрузка размера колонок из настроек
@@ -122,6 +139,16 @@ namespace BILLmanager_app
             }
 
             
+        }
+
+        private void MainFormOnFormClosed(object sender, FormClosedEventArgs e)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            using (FileStream fs = new FileStream("settings.dat", FileMode.OpenOrCreate))
+            {
+                formatter.Serialize(fs, Settings);
+                Console.WriteLine("Settings saved");
+            }
         }
 
         private void MainFormOnResize(object sender, EventArgs e)
