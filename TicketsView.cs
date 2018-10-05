@@ -64,7 +64,6 @@ namespace BILLmanager_app
                 if (e.NewWidth <= view.Columns[e.ColumnIndex].Width && view.Columns[e.ColumnIndex].Width > 20)
                 {
                     view.Columns[e.ColumnIndex + 1].Width -= e.NewWidth - view.Columns[e.ColumnIndex].Width;
-
                     _innerUpdateColSize();
                 }
                 else
@@ -83,7 +82,6 @@ namespace BILLmanager_app
             }            
         }
         
-        
         public TicketsView()
         {
             Settings = new Settings();
@@ -98,11 +96,13 @@ namespace BILLmanager_app
             ticketsView.View = View.Details;
             ticketsView.FullRowSelect = true;
 
-            
             mainForm = new Form();
             mainForm.Resize += MainFormOnResize;
             mainForm.Text = "Кекитница";
             mainForm.Size = new Size(1000, 600);
+
+            ticketsView.Scrollable = false; 
+            
             mainForm.Controls.Add(ticketsView);
             // Загрузка размера колонок из настроек
             Settings.LoadColSizes(mainForm.Size.Width); 
@@ -112,6 +112,8 @@ namespace BILLmanager_app
             {
                 AddColumnToView(Settings.ColumnToName[col], Convert.ToInt32(mainForm.Size.Width * Settings.ColumnToSize[col] / 100));
             }
+
+            UpdateColumnsSize();
             
             // Загрузка тикетов в список
             foreach (Dictionary<string,string> ticket in allTickets)
