@@ -186,11 +186,18 @@ namespace BILLmanager_app
             Settings.LoadColNames();
 
             LoadTickets();
+
+            System.Timers.Timer timer = new System.Timers.Timer(10000);
+            timer.Elapsed += (sender, args) => 
+            {
+                UpdateTicketsList(); 
+                UpdateTicketsView();                
+            };
+            timer.Enabled = true;
+            timer.AutoReset = true;
             
             ticketsView = new ListView();
-            
             ticketsView.ColumnWidthChanging += TicketsViewOnColumnWidthChanging;
-            
             ticketsView.Dock = DockStyle.Fill;
             ticketsView.View = View.Details;
             ticketsView.FullRowSelect = true;
@@ -201,12 +208,6 @@ namespace BILLmanager_app
             mainForm.Text = "Кекитница";
             mainForm.Size = new Size(1000, 600);
             mainForm.FormClosed += MainFormOnFormClosed;
-            ticketsView.KeyDown += (sender, args) =>
-            {
-                UpdateTicketsList(); 
-                UpdateTicketsView();
-                ticketsView.Update();
-            };
             
             mainForm.Controls.Add(ticketsView);
             // Загрузка размера колонок из настроек
@@ -225,8 +226,6 @@ namespace BILLmanager_app
             {
                 AddItemToList(new []{ ticket["id"], ticket["name"], ticket["client"], ticket["queue"], ticket["deadline"] } );
             }
-
-            
         }
 
         private void MainFormOnFormClosed(object sender, FormClosedEventArgs e)
