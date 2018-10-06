@@ -95,6 +95,7 @@ namespace BILLmanager_app
                     else // Если тикет новый, добавим его в список
                     {
                         AddItemToList(new []{ ticket["id"], ticket["name"], ticket["client"], ticket["queue"], ticket["deadline"]});
+                        allTickets.Add(ticket);
                         isTicketFound = false;
                     }
                 }
