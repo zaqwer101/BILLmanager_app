@@ -8,6 +8,7 @@ namespace BILLmanager_app
     { 
         public Dictionary<string, string> ColumnToName;
         public Dictionary<string, int> ColumnToSize; // Словарь коэффицентов размеров
+        public Dictionary<string, int> ColumnToColID; // Словарь соответствия внутреннего имени параметра и положения колонки в таблице 
         public bool isColSizeDefault; 
 
         public Settings()
@@ -28,6 +29,16 @@ namespace BILLmanager_app
                 {"client", "Client"},
                 {"queue", "Queue"},
                 {"deadline", "Deadline"}
+            };
+
+            // Дефолтное положение для колонок, на данный момент изменять порядок нельзя
+            ColumnToColID = new Dictionary<string, int>()
+            {
+                {"id", 0},
+                {"name", 1},
+                {"client", 2},
+                {"queue", 3},
+                {"deadline", 4}
             };
         }
 

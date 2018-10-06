@@ -43,6 +43,87 @@ namespace BILLmanager_app
                 ] / 100;
             }
         }
+
+        private void LoadTickets()
+        {
+            try
+            {
+                allTickets = BillmgrHandler.getTickets();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Не удалось загрузить список тикетов");
+            }
+        }
+
+        private void UpdateTicketsView()
+        {
+            for (int i = 0; i < allTickets.Count; i++)
+            {
+                ticketsView.Items[i].SubItems[Settings.ColumnToColID["deadline"]].Text = allTickets[i]["deadline"];
+            }
+        }
+        
+        private void UpdateTicketsList()
+        {
+            try
+            {
+                List<Dictionary<string, string>> newTickets = BillmgrHandler.getTickets();
+                foreach (Dictionary<string, string> ticket in newTickets.ToList()) // Перебираем новые тикеты, обновляем параметры или добавляем в список
+                {
+                    bool isTicketFound = false; 
+                    foreach (Dictionary<string,string> _ticket in allTickets.ToList())
+                    {
+                        if (ticket["id"] == _ticket["id"])
+                        {
+                            isTicketFound = true; // Тикет был и при прошлом запросе
+                            break;
+                        }
+                    }
+
+                    if (isTicketFound) // Если тикет как был так и остался, просто обновим нужные параметры
+                    {
+                        foreach (Dictionary<string,string> _ticket in allTickets.ToList()) // Перебираем все тикеты в поисках нужного
+                        {
+                            if (_ticket["id"] == ticket["id"])
+                            {
+                                _ticket["deadline"] = ticket["deadline"];
+                                break;
+                            }
+                        }
+                    }
+                    else // Если тикет новый, добавим его в список
+                    {
+                        AddItemToList(new []{ ticket["id"], ticket["name"], ticket["client"], ticket["queue"], ticket["deadline"]});
+                        isTicketFound = false;
+                    }
+                }
+
+                foreach (Dictionary<string,string> ticket in allTickets.ToList()) // Перебираем старые тикеты, удаляем из списка неактуальные
+                {
+                    bool isTicketFound = false;
+                    foreach (Dictionary<string,string> newTicket in newTickets.ToList())
+                    {
+                        if (newTicket["id"] == ticket["id"]) // Тикет есть, не удаляем
+                        {
+                            isTicketFound = true;
+                            break;
+                        }
+                    }
+
+                    if (!isTicketFound)
+                    {
+                        ticketsView.Items[allTickets.IndexOf(ticket)].Remove();
+                        allTickets.Remove(ticket);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
         
         private void TicketsViewOnColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
         {
@@ -101,10 +182,10 @@ namespace BILLmanager_app
                 Console.WriteLine("Не смог загрузить настройки");
             }
             
-            
             Settings.LoadColNames();
+
+            LoadTickets();
             
-            allTickets = BillmgrHandler.getTickets();
             ticketsView = new ListView();
             
             ticketsView.ColumnWidthChanging += TicketsViewOnColumnWidthChanging;
@@ -119,6 +200,12 @@ namespace BILLmanager_app
             mainForm.Text = "Кекитница";
             mainForm.Size = new Size(1000, 600);
             mainForm.FormClosed += MainFormOnFormClosed;
+            ticketsView.KeyDown += (sender, args) =>
+            {
+                UpdateTicketsList(); 
+                UpdateTicketsView();
+                ticketsView.Update();
+            };
             
             mainForm.Controls.Add(ticketsView);
             // Загрузка размера колонок из настроек
