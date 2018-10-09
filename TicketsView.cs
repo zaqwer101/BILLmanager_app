@@ -193,6 +193,7 @@ namespace BILLmanager_app
                 UpdateTicketsList(); 
                 UpdateTicketsView();                
             };
+            
             timer.Enabled = true;
             timer.AutoReset = true;
             
@@ -207,7 +208,9 @@ namespace BILLmanager_app
             mainForm.Resize += MainFormOnResize;
             mainForm.Text = "Кекитница";
             mainForm.Size = new Size(1000, 600);
-            mainForm.FormClosed += MainFormOnFormClosed;
+            mainForm.Icon = new System.Drawing.Icon(Path.GetFullPath(@"image/icon.ico"));
+
+            
             
             mainForm.Controls.Add(ticketsView);
             // Загрузка размера колонок из настроек
