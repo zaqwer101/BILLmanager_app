@@ -7,16 +7,17 @@ namespace BILLmanager_app
     public class Settings 
     { 
         public Dictionary<string, string> ColumnToName;
+        // ReSharper disable once FieldCanBeMadeReadOnly.Global
         public Dictionary<string, int> ColumnToSize; // Словарь коэффицентов размеров
-        public Dictionary<string, int> ColumnToColID; // Словарь соответствия внутреннего имени параметра и положения колонки в таблице 
-        public bool isColSizeDefault; 
+        public Dictionary<string, int> ColumnToColId; // Словарь соответствия внутреннего имени параметра и положения колонки в таблице 
+        public bool IsColSizeDefault; 
 
         public Settings()
         {
             ColumnToName = new Dictionary<string, string>();
             LoadColNames();
             ColumnToSize = new Dictionary<string, int>();
-            isColSizeDefault = true;
+            IsColSizeDefault = true;
         }
 
         // Заполнение списка соответствий имён колонок с их внутренними именами
@@ -32,7 +33,7 @@ namespace BILLmanager_app
             };
 
             // Дефолтное положение для колонок, на данный момент изменять порядок нельзя
-            ColumnToColID = new Dictionary<string, int>()
+            ColumnToColId = new Dictionary<string, int>()
             {
                 {"id", 0},
                 {"name", 1},
@@ -45,7 +46,7 @@ namespace BILLmanager_app
         // Загрузка коэффицентов размеров колонок, относительных ширине формы
         public void LoadColSizes(int formWidth)
         {
-            if (isColSizeDefault)
+            if (IsColSizeDefault)
             {
                 foreach (string col in ColumnToName.Keys)
                 {

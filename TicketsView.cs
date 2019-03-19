@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
@@ -60,7 +61,7 @@ namespace BILLmanager_app
         {
             for (int i = 0; i < allTickets.Count; i++)
             {
-                ticketsView.Items[i].SubItems[Settings.ColumnToColID["deadline"]].Text = allTickets[i]["deadline"];
+                ticketsView.Items[i].SubItems[Settings.ColumnToColId["deadline"]].Text = allTickets[i]["deadline"];
             }
         }
         
@@ -144,7 +145,7 @@ namespace BILLmanager_app
             ListView view = (ListView) sender; 
             if (e.ColumnIndex != view.Columns.Count - 1)
             {
-                Settings.isColSizeDefault = false;
+                Settings.IsColSizeDefault = false;
                 if (e.NewWidth <= view.Columns[e.ColumnIndex].Width && view.Columns[e.ColumnIndex].Width > 20)
                 {
                     view.Columns[e.ColumnIndex + 1].Width -= e.NewWidth - view.Columns[e.ColumnIndex].Width;
@@ -180,7 +181,7 @@ namespace BILLmanager_app
             catch (Exception e)
             {
                 Settings = new Settings();
-                Console.WriteLine("Не смог загрузить настройки");
+                Console.WriteLine("Не смог загрузить настройки\n" + e.Message);
             }
             
             Settings.LoadColNames();
@@ -217,7 +218,7 @@ namespace BILLmanager_app
             Settings.LoadColSizes(mainForm.Size.Width); 
             
             // Загрузка колонок в ListView
-            foreach (string col in Settings.ColumnToName.Keys)
+            foreach (var col in Settings.ColumnToName.Keys)
             {
                 AddColumnToView(Settings.ColumnToName[col], Convert.ToInt32(mainForm.Size.Width * Settings.ColumnToSize[col] / 100));
             }
@@ -225,16 +226,18 @@ namespace BILLmanager_app
             UpdateColumnsSize();
             
             // Загрузка тикетов в список
-            foreach (Dictionary<string,string> ticket in allTickets)
+            foreach (var ticket in allTickets)
             {
                 AddItemToList(new []{ ticket["id"], ticket["name"], ticket["client"], ticket["queue"], ticket["deadline"] } );
             }
+
+            this.mainForm.Closing += OnWindowClosing;
         }
 
-        private void MainFormOnFormClosed(object sender, FormClosedEventArgs e)
+        private void OnWindowClosing(object sender, CancelEventArgs e) 
         {
-            BinaryFormatter formatter = new BinaryFormatter();
-            using (FileStream fs = new FileStream("settings.dat", FileMode.OpenOrCreate))
+            var formatter = new BinaryFormatter();
+            using (var fs = new FileStream("settings.dat", FileMode.OpenOrCreate))
             {
                 formatter.Serialize(fs, Settings);
                 Console.WriteLine("Settings saved");
