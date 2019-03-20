@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Runtime.Remoting.Messaging;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace BILLmanager_app
 {   
@@ -12,34 +12,35 @@ namespace BILLmanager_app
         private static string authinfo;
         public static string billAddr;
 
-        public static List<Dictionary<string, string>> getTickets()
+        public static List<Dictionary<string, string>> getTickets(Settings settings)
         {
-            string jsonOut = request("ticket", new List<string>() {"out=JSONdata"});
-            jsonOut = "{ \"Tickets\": " + jsonOut + "}"; 
-            AllTickets allTickets =  JsonConvert.DeserializeObject<AllTickets>(jsonOut); 
-            
-            List<Dictionary<string, string>> list = new List<Dictionary<string, string>>();
-            
-            foreach (_Ticket ticket in allTickets.Tickets)
+            var list = new List<Dictionary<string, string>>();
+            string xmlOut = APIRequest("ticket", new List<string>() {"out=xml"});
+            XDocument doc = XDocument.Parse(xmlOut);
+
+            foreach(var node in doc.Root.Elements())
             {
-                Dictionary<string, string> ticketInfo = new Dictionary<string, string>();
-                
-                ticketInfo["id"] = ticket.id;
-                ticketInfo["name"] = ticket.name;
-                ticketInfo["client"] = ticket.client;
-                ticketInfo["queue"] = ticket.queue;
-                ticketInfo["not_blocked"] = ticket.not_blocked;
-                ticketInfo["deadline"] = ticket.deadline;
-                
-                list.Add(ticketInfo);
+                Dictionary<string, string> ticket = new Dictionary<string, string>();
+                foreach(var col in settings.ColumnToColId.Keys)
+                {
+                    ticket[col] = "";
+                }
+
+                if (node.Name != "tparams")
+                {
+                    foreach (var el in node.Descendants())
+                    {
+                        ticket[el.Name.ToString()] = el.Value;
+                    }
+                    list.Add(ticket);
+                    Console.WriteLine();
+                }
             }
 
             return list;
-            
-            
         }
         
-        public static string request(string func, List<string> listArgs)
+        public static string APIRequest(string func, List<string> listArgs)
         {
             StreamReader sr = new StreamReader("LoginInfo.txt"); // В директории с бинарником должен быть этот файл
             billAddr = sr.ReadLine();

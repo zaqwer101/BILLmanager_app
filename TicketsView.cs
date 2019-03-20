@@ -49,7 +49,7 @@ namespace BILLmanager_app
         {
             try
             {
-                allTickets = BillmgrHandler.getTickets();
+                allTickets = BillmgrHandler.getTickets(Settings);
             }
             catch (Exception e)
             {
@@ -69,7 +69,7 @@ namespace BILLmanager_app
         {
             try
             {
-                List<Dictionary<string, string>> newTickets = BillmgrHandler.getTickets();
+                List<Dictionary<string, string>> newTickets = BillmgrHandler.getTickets(Settings);
                 foreach (Dictionary<string, string> ticket in newTickets.ToList()) // Перебираем новые тикеты, обновляем параметры или добавляем в список
                 {
                     bool isTicketFound = false; 
@@ -95,7 +95,7 @@ namespace BILLmanager_app
                     }
                     else // Если тикет новый, добавим его в список
                     {
-                        AddItemToList(new []{ ticket["id"], ticket["name"], ticket["client"], ticket["queue"], ticket["deadline"]});
+                        AddItemToList(new []{ ticket["id"], ticket["name"], ticket["client"], ticket["queue"], ticket["deadline"], ticket["not_blocked"]});
                         allTickets.Add(ticket);
                         isTicketFound = false;
                     }

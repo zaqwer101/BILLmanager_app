@@ -8,10 +8,7 @@ namespace BILLmanager_app
 {
     public class Program
     {
-        public static AllTickets allTickets;
 
-        
-        
         public static void Main(string[] args)
         {
             TicketsView view = new TicketsView();
