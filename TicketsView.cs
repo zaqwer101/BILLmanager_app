@@ -49,9 +49,9 @@ namespace BILLmanager_app
         {
             try
             {
-                allTickets = BillmgrHandler.getTickets(Settings);
+                allTickets = BillmgrHandler.GetTickets(Settings);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 MessageBox.Show("Не удалось загрузить список тикетов");
             }
@@ -62,6 +62,7 @@ namespace BILLmanager_app
             for (int i = 0; i < allTickets.Count; i++)
             {
                 ticketsView.Items[i].SubItems[Settings.ColumnToColId["deadline"]].Text = allTickets[i]["deadline"];
+                ticketsView.Items[i].SubItems[Settings.ColumnToColId["not_blocked"]].Text = allTickets[i]["not_blocked"];
             }
         }
         
@@ -69,7 +70,7 @@ namespace BILLmanager_app
         {
             try
             {
-                List<Dictionary<string, string>> newTickets = BillmgrHandler.getTickets(Settings);
+                List<Dictionary<string, string>> newTickets = BillmgrHandler.GetTickets(Settings);
                 foreach (Dictionary<string, string> ticket in newTickets.ToList()) // Перебираем новые тикеты, обновляем параметры или добавляем в список
                 {
                     bool isTicketFound = false; 
@@ -166,7 +167,7 @@ namespace BILLmanager_app
                 }
             }            
         }
-        
+
         public TicketsView()
         {
             try
@@ -203,12 +204,18 @@ namespace BILLmanager_app
             ticketsView.Dock = DockStyle.Fill;
             ticketsView.View = View.Details;
             ticketsView.FullRowSelect = true;
-            ticketsView.Scrollable = false; 
-            
+            ticketsView.Scrollable = false;
+
+            if (Settings.WinHeigh == 0 || Settings.WinWidth == 0)
+            {
+                Settings.WinWidth = 1000;
+                Settings.WinHeigh = 600;
+            }
+
             mainForm = new Form();
             mainForm.Resize += MainFormOnResize;
             mainForm.Text = "Кекитница";
-            mainForm.Size = new Size(1000, 600);
+            mainForm.Size = new Size(Settings.WinWidth, Settings.WinHeigh);
             mainForm.Icon = new System.Drawing.Icon(Path.GetFullPath(@"image/icon.ico"));
 
             
@@ -228,7 +235,7 @@ namespace BILLmanager_app
             // Загрузка тикетов в список
             foreach (var ticket in allTickets)
             {
-                AddItemToList(new []{ ticket["id"], ticket["name"], ticket["client"], ticket["queue"], ticket["deadline"] } );
+                AddItemToList(new []{ ticket["id"], ticket["name"], ticket["client"], ticket["queue"], ticket["deadline"], ticket["not_blocked"] } );
             }
 
             this.mainForm.Closing += OnWindowClosing;
@@ -248,6 +255,8 @@ namespace BILLmanager_app
         {
             Settings.LoadColSizes(mainForm.Size.Width);
             UpdateColumnsSize();
+            Settings.WinHeigh = mainForm.Height;
+            Settings.WinWidth = mainForm.Width;
         }
 
         public void Show()

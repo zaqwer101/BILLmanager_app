@@ -12,7 +12,7 @@ namespace BILLmanager_app
         private static string authinfo;
         public static string billAddr;
 
-        public static List<Dictionary<string, string>> getTickets(Settings settings)
+        public static List<Dictionary<string, string>> GetTickets(Settings settings)
         {
             var list = new List<Dictionary<string, string>>();
             string xmlOut = APIRequest("ticket", new List<string>() {"out=xml"});
@@ -31,6 +31,7 @@ namespace BILLmanager_app
                     foreach (var el in node.Descendants())
                     {
                         ticket[el.Name.ToString()] = el.Value;
+                        Console.WriteLine("{0}: {1}", el.Name, ticket[el.Name.ToString()]);
                     }
                     list.Add(ticket);
                     Console.WriteLine();

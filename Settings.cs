@@ -5,7 +5,8 @@ namespace BILLmanager_app
 {
     [Serializable]
     public class Settings 
-    { 
+    {
+        public int WinHeigh, WinWidth;
         public Dictionary<string, string> ColumnToName;
         public Dictionary<string, int> ColumnToSize; // Словарь коэффицентов размеров
         public Dictionary<string, int> ColumnToColId; // Словарь соответствия внутреннего имени параметра и положения колонки в таблице 
@@ -17,6 +18,7 @@ namespace BILLmanager_app
             LoadColNames();
             ColumnToSize = new Dictionary<string, int>();
             IsColSizeDefault = true;
+            WinHeigh = 0; WinWidth = 0;
         }
 
         // Заполнение списка соответствий имён колонок с их внутренними именами

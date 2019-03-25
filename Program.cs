@@ -11,6 +11,7 @@ namespace BILLmanager_app
 
         public static void Main(string[] args)
         {
+            //BillmgrHandler.GetTickets(new Settings());
             TicketsView view = new TicketsView();
             view.Show();
         }
