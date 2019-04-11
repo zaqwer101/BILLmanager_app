@@ -21,7 +21,7 @@ namespace BILLmanager_app
             foreach(var node in doc.Root.Elements())
             {
                 Dictionary<string, string> ticket = new Dictionary<string, string>();
-                foreach(var col in settings.ColumnToColId.Keys)
+                foreach(var col in settings.GetColumnsList())
                 {
                     ticket[col] = "";
                 }

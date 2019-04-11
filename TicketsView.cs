@@ -10,6 +10,7 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 
+
 namespace BILLmanager_app
 {
     public class TicketsView
@@ -27,9 +28,9 @@ namespace BILLmanager_app
         {
             ticketsView.Columns.RemoveAt(id);
         }
-        public void AddItemToList(string[] itemParams) 
+        public void AddItemToList(List<string> itemParams) 
         {
-            ticketsView.Items.Add(new ListViewItem(itemParams));
+            ticketsView.Items.Add(new ListViewItem(itemParams.ToArray()));
         }
         public void DeleteItemFromList(ListViewItem item) 
         {
@@ -51,18 +52,9 @@ namespace BILLmanager_app
             {
                 allTickets = BillmgrHandler.GetTickets(Settings);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                MessageBox.Show("Не удалось загрузить список тикетов");
-            }
-        }
-
-        private void UpdateTicketsView()
-        {
-            for (int i = 0; i < allTickets.Count; i++)
-            {
-                ticketsView.Items[i].SubItems[Settings.ColumnToColId["deadline"]].Text = allTickets[i]["deadline"];
-                ticketsView.Items[i].SubItems[Settings.ColumnToColId["not_blocked"]].Text = allTickets[i]["not_blocked"];
+                MessageBox.Show("Не удалось загрузить список тикетов\n" + e.Message);
             }
         }
         
@@ -96,7 +88,7 @@ namespace BILLmanager_app
                     }
                     else // Если тикет новый, добавим его в список
                     {
-                        AddItemToList(new []{ ticket["id"], ticket["name"], ticket["client"], ticket["queue"], ticket["deadline"], ticket["not_blocked"]});
+                        AddItemToList(Settings.GetColumnsValues(ticket));
                         allTickets.Add(ticket);
                         isTicketFound = false;
                     }
@@ -189,11 +181,10 @@ namespace BILLmanager_app
 
             LoadTickets();
 
-            System.Timers.Timer timer = new System.Timers.Timer(10000);
+            System.Timers.Timer timer = new System.Timers.Timer(1000);
             timer.Elapsed += (sender, args) => 
             {
                 UpdateTicketsList(); 
-                UpdateTicketsView();                
             };
             
             timer.Enabled = true;
@@ -204,7 +195,8 @@ namespace BILLmanager_app
             ticketsView.Dock = DockStyle.Fill;
             ticketsView.View = View.Details;
             ticketsView.FullRowSelect = true;
-            ticketsView.Scrollable = false;
+            ticketsView.Scrollable = true;
+            
 
             if (Settings.WinHeigh == 0 || Settings.WinWidth == 0)
             {
@@ -216,7 +208,7 @@ namespace BILLmanager_app
             mainForm.Resize += MainFormOnResize;
             mainForm.Text = "Кекитница";
             mainForm.Size = new Size(Settings.WinWidth, Settings.WinHeigh);
-            mainForm.Icon = new System.Drawing.Icon(Path.GetFullPath(@"image/icon.ico"));
+            //mainForm.Icon = new System.Drawing.Icon(Path.GetFullPath(@"image/icon.ico"));
 
             
             
@@ -225,7 +217,7 @@ namespace BILLmanager_app
             Settings.LoadColSizes(mainForm.Size.Width); 
             
             // Загрузка колонок в ListView
-            foreach (var col in Settings.ColumnToName.Keys)
+            foreach (var col in Settings.GetColumnsList())
             {
                 AddColumnToView(Settings.ColumnToName[col], Convert.ToInt32(mainForm.Size.Width * Settings.ColumnToSize[col] / 100));
             }
@@ -235,7 +227,7 @@ namespace BILLmanager_app
             // Загрузка тикетов в список
             foreach (var ticket in allTickets)
             {
-                AddItemToList(new []{ ticket["id"], ticket["name"], ticket["client"], ticket["queue"], ticket["deadline"], ticket["not_blocked"] } );
+                AddItemToList(Settings.GetColumnsValues(ticket));
             }
 
             this.mainForm.Closing += OnWindowClosing;

@@ -3,13 +3,14 @@ using System.Collections.Generic;
 
 namespace BILLmanager_app
 {
-    [Serializable]
     public class Settings 
     {
+        // ticket["id"], ticket["name"], ticket["client"], ticket["queue"], ticket["deadline"]
+        private List<string> columnsList = new List<string> {"id", "name", "client", "queue", "deadline"};
+
         public int WinHeigh, WinWidth;
         public Dictionary<string, string> ColumnToName;
         public Dictionary<string, int> ColumnToSize; // Словарь коэффицентов размеров
-        public Dictionary<string, int> ColumnToColId; // Словарь соответствия внутреннего имени параметра и положения колонки в таблице 
         public bool IsColSizeDefault; 
 
         public Settings()
@@ -30,20 +31,24 @@ namespace BILLmanager_app
                 {"name", "Name"},
                 {"client", "Client"},
                 {"queue", "Queue"},
-                {"deadline", "Deadline"},
-                {"not_blocked", "Blocked"}
+                {"deadline", "Deadline"}
             };
+        }
 
-            // Дефолтное положение для колонок, на данный момент изменять порядок нельзя
-            ColumnToColId = new Dictionary<string, int>()
+        // Получить массив колонок
+        public List<string> GetColumnsList()
+        {
+            return this.columnsList;
+        }
+
+        public List<string> GetColumnsValues(Dictionary<string, string> ticket)
+        {   
+            List<string> values = new List<string>();
+            foreach(var node in this.GetColumnsList())
             {
-                {"id", 0},
-                {"name", 1},
-                {"client", 2},
-                {"queue", 3},
-                {"deadline", 4},
-                {"not_blocked", 5}
-            };
+                values.Add(ticket[node]);
+            }
+            return values;
         }
 
         // Загрузка коэффицентов размеров колонок, относительных ширине формы
@@ -51,10 +56,10 @@ namespace BILLmanager_app
         {
             if (IsColSizeDefault)
             {
-                foreach (string col in ColumnToColId.Keys)
+                foreach (string col in GetColumnsList())
                 {
                     ColumnToSize[col] = Convert.ToInt32(
-                        100 / ColumnToColId.Keys.Count
+                        100 / columnsList.Count
                         ); 
                 }
             }
