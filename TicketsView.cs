@@ -60,64 +60,7 @@ namespace BILLmanager_app
         
         private void UpdateTicketsList()
         {
-            try
-            {
-                List<Dictionary<string, string>> newTickets = BillmgrHandler.GetTickets(Settings);
-                foreach (Dictionary<string, string> ticket in newTickets.ToList()) // Перебираем новые тикеты, обновляем параметры или добавляем в список
-                {
-                    bool isTicketFound = false; 
-                    foreach (Dictionary<string,string> _ticket in allTickets.ToList())
-                    {
-                        if (ticket["id"] == _ticket["id"])
-                        {
-                            isTicketFound = true; // Тикет был и при прошлом запросе
-                            break;
-                        }
-                    }
-
-                    if (isTicketFound) // Если тикет как был так и остался, просто обновим нужные параметры
-                    {
-                        foreach (Dictionary<string,string> _ticket in allTickets.ToList()) // Перебираем все тикеты в поисках нужного
-                        {
-                            if (_ticket["id"] == ticket["id"])
-                            {
-                                _ticket["deadline"] = ticket["deadline"];
-                                break;
-                            }
-                        }
-                    }
-                    else // Если тикет новый, добавим его в список
-                    {
-                        AddItemToList(Settings.GetColumnsValues(ticket));
-                        allTickets.Add(ticket);
-                        isTicketFound = false;
-                    }
-                }
-
-                foreach (Dictionary<string,string> ticket in allTickets.ToList()) // Перебираем старые тикеты, удаляем из списка неактуальные
-                {
-                    bool isTicketFound = false;
-                    foreach (Dictionary<string,string> newTicket in newTickets.ToList())
-                    {
-                        if (newTicket["id"] == ticket["id"]) // Тикет есть, не удаляем
-                        {
-                            isTicketFound = true;
-                            break;
-                        }
-                    }
-
-                    if (!isTicketFound)
-                    {
-                        ticketsView.Items[allTickets.IndexOf(ticket)].Remove();
-                        allTickets.Remove(ticket);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+                // TODO
         }
         
         private void TicketsViewOnColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
@@ -162,20 +105,7 @@ namespace BILLmanager_app
 
         public TicketsView()
         {
-            try
-            {
-                BinaryFormatter formatter = new BinaryFormatter();
-                using (FileStream fs = new FileStream("settings.dat", FileMode.OpenOrCreate))
-                {
-                    Settings = (Settings) formatter.Deserialize(fs);
-                    Console.WriteLine("Загрузил настройки");
-                }
-            }
-            catch (Exception e)
-            {
-                Settings = new Settings();
-                Console.WriteLine("Не смог загрузить настройки\n" + e.Message);
-            }
+            this.Settings = Settings.LoadSettings();
             
             Settings.LoadColNames();
 
@@ -235,12 +165,7 @@ namespace BILLmanager_app
 
         private void OnWindowClosing(object sender, CancelEventArgs e) 
         {
-            var formatter = new BinaryFormatter();
-            using (var fs = new FileStream("settings.dat", FileMode.OpenOrCreate))
-            {
-                formatter.Serialize(fs, Settings);
-                Console.WriteLine("Settings saved");
-            }
+            this.Settings.SaveSettings();
         }
 
         private void MainFormOnResize(object sender, EventArgs e)

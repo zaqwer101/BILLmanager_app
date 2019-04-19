@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace BILLmanager_app
 {
+    [Serializable]
     public class Settings 
     {
         // ticket["id"], ticket["name"], ticket["client"], ticket["queue"], ticket["deadline"]
@@ -63,6 +66,36 @@ namespace BILLmanager_app
                         ); 
                 }
             }
+        }
+
+        public void SaveSettings()
+        {
+            var formatter = new BinaryFormatter();
+            using (var fs = new FileStream("settings.dat", FileMode.OpenOrCreate))
+            {
+                formatter.Serialize(fs, this);
+                Console.WriteLine("Settings saved");
+            }
+        }
+
+        public static Settings LoadSettings()
+        {
+            Settings settings; 
+            try
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                using (FileStream fs = new FileStream("settings.dat", FileMode.OpenOrCreate))
+                {
+                    settings = (Settings) formatter.Deserialize(fs);
+                    Console.WriteLine("Загрузил настройки");
+                }
+            }
+            catch (Exception e)
+            {
+                settings = new Settings();
+                Console.WriteLine("Не смог загрузить настройки\n" + e.Message);
+            }
+            return settings;
         }
     }
 }
