@@ -48,19 +48,17 @@ namespace BILLmanager_app
 
         private void LoadTickets()
         {
-            try
-            {
-                allTickets = BillmgrHandler.GetTickets(Settings);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show("Не удалось загрузить список тикетов\n" + e.Message);
-            }
+            allTickets = BillmgrHandler.GetTickets(Settings);
         }
         
         private void UpdateTicketsList()
         {
+            var newTickets = BillmgrHandler.GetTickets(Settings);
+
+            foreach (var ticket in allTickets)
+            {
                 // TODO
+            }
         }
         
         private void TicketsViewOnColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
@@ -106,19 +104,8 @@ namespace BILLmanager_app
         public TicketsView()
         {
             this.Settings = Settings.LoadSettings();
-            
-            Settings.LoadColNames();
 
             LoadTickets();
-
-            System.Timers.Timer timer = new System.Timers.Timer(1000);
-            timer.Elapsed += (sender, args) => 
-            {
-                UpdateTicketsList(); 
-            };
-            
-            timer.Enabled = true;
-            timer.AutoReset = true;
             
             ticketsView = new ListView();
             ticketsView.ColumnWidthChanging += TicketsViewOnColumnWidthChanging;

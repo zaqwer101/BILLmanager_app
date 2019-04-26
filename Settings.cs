@@ -9,7 +9,7 @@ namespace BILLmanager_app
     public class Settings 
     {
         // ticket["id"], ticket["name"], ticket["client"], ticket["queue"], ticket["deadline"]
-        private List<string> columnsList = new List<string> {"id", "name", "client", "queue", "deadline"};
+        private List<string> columnsList;
 
         public int WinHeigh, WinWidth;
         public Dictionary<string, string> ColumnToName;
@@ -18,16 +18,9 @@ namespace BILLmanager_app
 
         public Settings()
         {
+            columnsList = new List<string> {"id", "name", "client", "queue", "deadline"};
             ColumnToName = new Dictionary<string, string>();
-            LoadColNames();
-            ColumnToSize = new Dictionary<string, int>();
-            IsColSizeDefault = true;
-            WinHeigh = 0; WinWidth = 0;
-        }
 
-        // Заполнение списка соответствий имён колонок с их внутренними именами
-        public void LoadColNames()
-        {
             ColumnToName = new Dictionary<string, string>()
             {
                 {"id", "ID"},
@@ -36,8 +29,12 @@ namespace BILLmanager_app
                 {"queue", "Queue"},
                 {"deadline", "Deadline"}
             };
-        }
 
+            ColumnToSize = new Dictionary<string, int>();
+            IsColSizeDefault = true;
+            WinHeigh = 0; WinWidth = 0;
+
+        }
         // Получить массив колонок
         public List<string> GetColumnsList()
         {
@@ -96,6 +93,11 @@ namespace BILLmanager_app
                 Console.WriteLine("Не смог загрузить настройки\n" + e.Message);
             }
             return settings;
+        }
+
+        public void AddColumn(string name, string intname)
+        {
+
         }
     }
 }
